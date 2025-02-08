@@ -1,0 +1,79 @@
+[gd_scene load_steps=13 format=3 uid="uid://diiuc2k4xxh3x"]
+
+[ext_resource type="Script" uid="uid://u7qc5v7483ia" path="res://overworld/overworld.gd" id="1_jv32c"]
+[ext_resource type="Script" uid="uid://ucywx6yeoym2" path="res://overworld/test_sun_rotate.gd" id="2_fysd7"]
+[ext_resource type="Script" uid="uid://dlkp2u0x2xpa5" path="res://terrain/manager.gd" id="2_nnj58"]
+[ext_resource type="Script" uid="uid://cppb46ep74cu3" path="res://terrain/store.gd" id="3_uniiq"]
+[ext_resource type="Script" uid="uid://db38yi5qpqqlt" path="res://overworld/terrain/generator.gd" id="4_nnj58"]
+[ext_resource type="PackedScene" uid="uid://dly8da03ngeln" path="res://player/player.tscn" id="5_uniiq"]
+[ext_resource type="Script" uid="uid://c5qjw3u0nd5l6" path="res://components/chunk_loader.gd" id="6_a076f"]
+[ext_resource type="Script" uid="uid://c4weu2nvrw1m2" path="res://player/controller.gd" id="7_xp5fb"]
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_fysd7"]
+
+[sub_resource type="Sky" id="Sky_fysd7"]
+sky_material = SubResource("PhysicalSkyMaterial_fysd7")
+
+[sub_resource type="Environment" id="Environment_tyf74"]
+sky = SubResource("Sky_fysd7")
+ambient_light_source = 3
+fog_enabled = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_nnj58"]
+noise_type = 2
+seed = 1702644915
+
+[node name="Overworld" type="Node3D" node_paths=PackedStringArray("terrain_manager")]
+script = ExtResource("1_jv32c")
+terrain_manager = NodePath("TerrainManager3D")
+metadata/_custom_type_script = ExtResource("1_jv32c")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.720911, -0.0651407, 0.689959, 0.195168, 0.936196, 0.292312, -0.664978, 0.345389, -0.662201, 0, 26.8441, 0)
+shadow_enabled = true
+script = ExtResource("2_fysd7")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tyf74")
+
+[node name="TerrainManager3D" type="Node" parent="." node_paths=PackedStringArray("generator", "store")]
+script = ExtResource("2_nnj58")
+generator = NodePath("OverworldTerrainGenerator")
+store = NodePath("TerrainStore3D")
+metadata/_custom_type_script = ExtResource("2_nnj58")
+
+[node name="TerrainStore3D" type="Node3D" parent="TerrainManager3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 0, 32)
+script = ExtResource("3_uniiq")
+metadata/_custom_type_script = ExtResource("3_uniiq")
+
+[node name="OverworldTerrainGenerator" type="Node" parent="TerrainManager3D"]
+script = ExtResource("4_nnj58")
+noise = SubResource("FastNoiseLite_nnj58")
+generate_collisions = true
+base_seed = 1702644915
+metadata/_custom_type_script = ExtResource("4_nnj58")
+
+[node name="Player3D" parent="." node_paths=PackedStringArray("controller", "camera") instance=ExtResource("5_uniiq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5605, 25.4995, 18.7866)
+controller = NodePath("PlayerController3D")
+camera = NodePath("PerspectiveCamera")
+
+[node name="PerspectiveCamera" type="Camera3D" parent="Player3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.649994, 0)
+
+[node name="OrthogonalCamera" type="Camera3D" parent="Player3D/PerspectiveCamera"]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 1.81611, 4.72334)
+projection = 1
+size = 10.0
+
+[node name="ChunkLoader" type="Node" parent="Player3D" node_paths=PackedStringArray("terrain_manager")]
+script = ExtResource("6_a076f")
+terrain_manager = NodePath("../../TerrainManager3D")
+load_radius = Vector3(2, 0.001, 2)
+metadata/_custom_type_script = ExtResource("6_a076f")
+
+[node name="PlayerController3D" type="Node" parent="Player3D"]
+script = ExtResource("7_xp5fb")
+speed = 50.0
+metadata/_custom_type_script = ExtResource("7_xp5fb")
