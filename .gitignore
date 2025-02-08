@@ -1,0 +1,10 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Addon-specific
+addons/debug_draw_3d/libs/**/*
+
+# IDEs
+.vscode/
+.idea/
