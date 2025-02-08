@@ -55,7 +55,7 @@ base_seed = 1702644915
 metadata/_custom_type_script = ExtResource("4_nnj58")
 
 [node name="Player3D" parent="." node_paths=PackedStringArray("controller", "camera") instance=ExtResource("5_uniiq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5605, 25.4995, 18.7866)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.9123, 25.4995, 16.6542)
 controller = NodePath("PlayerController3D")
 camera = NodePath("PerspectiveCamera")
 
@@ -70,7 +70,7 @@ size = 10.0
 [node name="ChunkLoader" type="Node" parent="Player3D" node_paths=PackedStringArray("terrain_manager")]
 script = ExtResource("6_a076f")
 terrain_manager = NodePath("../../TerrainManager3D")
-load_radius = Vector3(2, 0.001, 2)
+load_radius = Vector3(1, 0.001, 1)
 metadata/_custom_type_script = ExtResource("6_a076f")
 
 [node name="PlayerController3D" type="Node" parent="Player3D"]

@@ -51,3 +51,7 @@ func _enter_tree() -> void:
 
 	if mesh_instance: add_child(mesh_instance)
 	if collision_shape: add_child(collision_shape)
+
+func _process(delta: float) -> void:
+	if GlobalDebug.show_chunk_borders:
+		DebugDraw3D.draw_aabb(AABB(world_position, size))

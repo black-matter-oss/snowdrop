@@ -35,3 +35,12 @@ func _process(delta: float) -> void:
 
 	DebugDraw2D.end_text_group()
 	DebugDraw2D.end_text_group()
+
+# debug keybinds
+static var show_chunk_borders: bool = false
+
+func _input(event: InputEvent) -> void:
+	if not OS.is_debug_build(): return
+
+	if Input.is_action_just_pressed("debug_chunk_borders"):
+		show_chunk_borders = not show_chunk_borders
