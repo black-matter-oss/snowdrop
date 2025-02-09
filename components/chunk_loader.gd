@@ -18,21 +18,21 @@ func _physics_process(delta: float) -> void:
 		floori(parent.global_position.z / terrain_manager.chunk_size.z),
 	)
 
-	DebugDraw2D.begin_text_group("[components/chunk_loader@%s]" % parent)
+	DebugDraw2D.begin_text_group(get_path())
 	DebugDraw2D.set_text("current_chunk_coordinates", current_chunk_coordinates)
 	
 	# key is distance from center to parent
 	var chunks_to_load: Dictionary[float, Vector3i] = {}
 
 	if current_chunk_coordinates != last_chunk_coordinates:
-		GlobalDebug.time_measure_start("[components/chunk_loader@%s]" % parent)
+		GlobalDebug.time_measure_start(get_path(), "load picking logic", false)
 
 		# TODO can you do ranges on a Vector3 export?
 		if load_radius.x <= 0: load_radius.x = 0.001
 		if load_radius.y <= 0: load_radius.y = 0.001
 		if load_radius.z <= 0: load_radius.z = 0.001
 
-		if load_radius > Vector3.ZERO:
+		if load_radius > Vector3(0.001, 0.001, 0.001):
 			for chunk_y in range(-load_radius.y, load_radius.y + 1):
 				for chunk_x in range(-load_radius.x, load_radius.x + 1):
 					for chunk_z in range(-load_radius.z, load_radius.z + 1):
@@ -60,7 +60,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			chunks_to_load[0] = current_chunk_coordinates
 		
-		GlobalDebug.time_measure_end("load picking logic")
+		GlobalDebug.time_measure_end(get_path(), "load picking logic")
 	
 	if chunks_to_load.size() > 0:
 		for i in loaded_chunks.size():
@@ -73,6 +73,8 @@ func _physics_process(delta: float) -> void:
 				_print_debug("unloading %s" % str(chunk.coordinates))
 				terrain_manager.unload_chunk(chunk.coordinates)
 
+	var chunks_to_generate: Array[TerrainChunk3D] = []
+
 	for k in chunks_to_load:
 		var chunk_coordinates := chunks_to_load[k]
 		var chunk := terrain_manager.store.get_chunk(chunk_coordinates)
@@ -81,12 +83,16 @@ func _physics_process(delta: float) -> void:
 			_print_debug("generating chunk at %s" % chunk_coordinates)
 
 			chunk = terrain_manager.create_chunk(chunk_coordinates)
-			terrain_manager.generate_chunk(chunk_coordinates)
+			chunks_to_generate.append(chunk)
+			#terrain_manager.generate_chunk(chunk_coordinates)
 		
 		if chunk_coordinates == current_chunk_coordinates:
 			current_chunk = chunk
 		
 		loaded_chunks.append(chunk)
+	
+	if not chunks_to_generate.is_empty():
+		terrain_manager.generator.generate_chunks(chunks_to_generate)
 	
 	last_chunk_coordinates = current_chunk_coordinates
 	DebugDraw2D.end_text_group()

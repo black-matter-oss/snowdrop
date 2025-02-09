@@ -9,3 +9,7 @@ extends Node
 
 func generate_chunk(chunk: TerrainChunk3D) -> void:
 	push_error("NOT IMPLEMENTED")
+
+func generate_chunks(chunks: Array[TerrainChunk3D]) -> void:
+	for chunk in chunks:
+		generate_chunk(chunk)

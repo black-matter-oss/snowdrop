@@ -9,7 +9,7 @@ extends Node
 
 func _process(delta: float) -> void:
 	if OS.is_debug_build():
-		DebugDraw2D.begin_text_group("[terrain/manager]")
+		DebugDraw2D.begin_text_group(get_path())
 		DebugDraw2D.set_text("loaded chunks", store.get_loaded_chunks().size())
 		DebugDraw2D.end_text_group()
 
@@ -18,13 +18,6 @@ func create_chunk(coordinates: Vector3i) -> TerrainChunk3D:
 	store.add_chunk(chunk)
 
 	return chunk
-
-func generate_chunk(coordinates: Vector3i) -> void:
-	var chunk := store.get_chunk(coordinates)
-
-	GlobalDebug.time_measure_start("[terrain/manager]")
-	generator.generate_chunk(chunk)
-	GlobalDebug.time_measure_end("generate_chunk")
 
 func unload_chunk(coordinates: Vector3i) -> void:
 	# TODO check if other entities are using that chunk etc

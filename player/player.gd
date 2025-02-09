@@ -7,7 +7,7 @@ extends CharacterBody3D
 @export var camera_first_person: bool = true
 
 func _process(delta: float) -> void:
-	DebugDraw2D.begin_text_group("[player/player]")
+	DebugDraw2D.begin_text_group(get_path())
 	DebugDraw2D.set_text("global_position", global_position)
 	DebugDraw2D.end_text_group()
 

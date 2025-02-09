@@ -8,3 +8,6 @@ addons/debug_draw_3d/libs/**/*
 # IDEs
 .vscode/
 .idea/
+
+# misc
+.test/

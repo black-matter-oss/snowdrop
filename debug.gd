@@ -4,22 +4,27 @@ extends Node
 const TIME_TEXT_COLOR: Color = Color.GREEN
 const DEBUG_TEXT_COLOR: Color = Color.YELLOW
 
-static var _prev_measure_start: int = 0
-static var _prev_measure_end: int = 0
+#static var _prev_measure_start: int = 0
+#static var _prev_measure_end: int = 0
 
-static func time_measure_start(group: String) -> void:
+static var _measures: Dictionary[String, int] = {}
+
+static func time_measure_start(group: String, key: String, begin: bool = true) -> void:
 	if not OS.is_debug_build(): return
 
-	DebugDraw2D.begin_text_group(group)
-	_prev_measure_start = Time.get_ticks_usec()
+	if begin: DebugDraw2D.begin_text_group(group)
+	_measures[group + key] = Time.get_ticks_usec()
 
-static func time_measure_end(key: String) -> void:
+static func time_measure_end(group: String, key: String, end: bool = true) -> void:
 	if not OS.is_debug_build(): return
+	if (group + key) not in _measures:
+		print_debug("END WITHOUT START? " + (group + key))
+		return
 
-	_prev_measure_end = Time.get_ticks_usec()
+	DebugDraw2D.set_text(key + " (ms)", (Time.get_ticks_usec() - _measures[group + key]) / 1000.0, -1, TIME_TEXT_COLOR, 10.0)
+	if end: DebugDraw2D.end_text_group()
 
-	DebugDraw2D.set_text(key + " (ms)", (_prev_measure_end - _prev_measure_start) / 1000.0, -1, TIME_TEXT_COLOR, 10.0)
-	DebugDraw2D.end_text_group()
+	_measures.erase(group + key)
 
 func _process(delta: float) -> void:
 	if not OS.is_debug_build(): return
